@@ -1,0 +1,8 @@
+{
+  "browser": true,
+  "undef": true,
+  "unused": true,
+  "globals": {
+    "getSize": false
+  }
+}
