@@ -1,5 +1,8 @@
 ( function() {
 
+
+var console = window.console;
+
 function extend( a, b ) {
   for ( var prop in b ) {
     a[ prop ] = b[ prop ];
@@ -25,13 +28,32 @@ function makeArray( obj ) {
   return ary;
 }
 
+function getOuterHeight( elem ) {
+  var style = getComputedStyle( elem );
+  var marginTop = parseFloat( style.marginTop );
+  var marginBottom = parseFloat( style.marginBottom );
+  // set non-number values to 0, like auto
+  marginTop = isNaN( marginTop ) ? 0 : marginTop;
+  marginBottom = isNaN( marginBottom ) ? 0 : marginBottom;
+  return elem.offsetHeight + marginTop + marginBottom;
+}
 
-var console = window.console;
+function getQueryElement( elem ) {
+  if ( typeof elem == 'string' ) {
+    elem = document.querySelector( elem );
+  }
+  return elem;
+}
+
+// globally unique identifiers
+var GUID = 0;
+// internal store of all Flickity intances
+var instances = {};
+
+// --------------------------  -------------------------- //
 
 function Colcade( element, options ) {
-  if ( typeof element == 'string' ) {
-    element = document.querySelector( element );
-  }
+  element = getQueryElement( element );
   if ( !element ) {
     if ( console ) {
       console.error( 'Bad element for Colcade: ' + ( element ) );
@@ -52,6 +74,11 @@ Colcade.defaults = {};
 var proto = Colcade.prototype;
 
 proto.create = function() {
+  // add guid for Colcade.data
+  var guid = this.guid = ++GUID;
+  this.element.colcadeGUID = guid;
+  instances[ guid ] = this; // associate via id
+
   this.getColumns();
   this.activeColumns = this.getActiveColumns();
   this.getItemElements();
@@ -111,7 +138,9 @@ proto.layoutItem = function( item ) {
 
   this.activeColumns[ index ].appendChild( item );
   // at least 1px, if item hasn't loaded
-  var itemHeight = getSize( item ).outerHeight || 1;
+  // we're adding both top and bottom margin here.
+  // Not exactly accurate as they collapse, but it's cool
+  var itemHeight = getOuterHeight( item ) || 1;
   this.columnHeights[ index ] += itemHeight;
 };
 
@@ -144,6 +173,9 @@ proto.destroy = function() {
   }
   // remove events
   window.removeEventListener( 'resize', this._windowResizeHandler );
+  // remove data
+  delete this.element.colcadeGUID;
+  delete instances[ this.guid ];
 };
 
 // -------------------------- HTML init -------------------------- //
@@ -172,6 +204,12 @@ function htmlInit( elem ) {
 
   new Colcade( elem, options );
 }
+
+Colcade.data = function( elem ) {
+  elem = getQueryElement( elem );
+  var id = elem && elem.colcadeGUID;
+  return id && instances[ id ];
+};
 
 // --------------------------  -------------------------- //
 
