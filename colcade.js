@@ -49,28 +49,30 @@ function Colcade( element, options ) {
 
 Colcade.defaults = {};
 
-Colcade.prototype.create = function() {
+var proto = Colcade.prototype;
+
+proto.create = function() {
   this.getColumns();
   this.getItemElements();
   this.resetLayout();
   window.addEventListener( 'resize', this.onWindowResize.bind(this) );
 };
 
-Colcade.prototype.option = function( options ) {
+proto.option = function( options ) {
   this.options = extend( this.options, options );
 };
 
-Colcade.prototype.getColumns = function() {
+proto.getColumns = function() {
   var columns = this.element.querySelectorAll( this.options.columnSelector );
   this.columns = makeArray( columns );
 };
 
-Colcade.prototype.getItemElements = function() {
+proto.getItemElements = function() {
   var itemElems = this.element.querySelectorAll( this.options.itemSelector );
   this.items = makeArray( itemElems );
 };
 
-Colcade.prototype.resetLayout = function( activeColumns ) {
+proto.resetLayout = function( activeColumns ) {
   this.activeColumns = activeColumns || this.getActiveColumns();
   // this.colCount = this.activeColumns.length;
   // reset column heights
@@ -82,7 +84,7 @@ Colcade.prototype.resetLayout = function( activeColumns ) {
   this.layout();
 };
 
-Colcade.prototype.getActiveColumns = function() {
+proto.getActiveColumns = function() {
   var activeColumns = [];
   for ( var i=0, len = this.columns.length; i < len; i++ ) {
     var column = this.columns[i];
@@ -99,17 +101,17 @@ Colcade.prototype.getActiveColumns = function() {
 
 // --------------------------  -------------------------- //
 
-Colcade.prototype.layout = function() {
+proto.layout = function() {
   this.append( this.items );
 };
 
-Colcade.prototype.append = function( items ) {
+proto.append = function( items ) {
   for ( var i=0, len = items.length; i < len; i++ ) {
     this.appendItem( items[i] );
   }
 };
 
-Colcade.prototype.appendItem = function( item ) {
+proto.appendItem = function( item ) {
   var minHeight = Math.min.apply( Math, this.columnHeights );
   var index = this.columnHeights.indexOf( minHeight );
 
@@ -121,15 +123,14 @@ Colcade.prototype.appendItem = function( item ) {
 
 // --------------------------  -------------------------- //
 
-Colcade.prototype.onWindowResize = function() {
+proto.onWindowResize = function() {
   clearTimeout(this.resizeTimeout);
   this.resizeTimeout = setTimeout( function() {
     this.onDebouncedResize();
   }.bind(this), 100 );
 };
 
-Colcade.prototype.onDebouncedResize = function() {
-  console.log('debounce resize');
+proto.onDebouncedResize = function() {
   var activeColumns = this.getActiveColumns();
   if ( activeColumns == this.activeColumns ) {
     return;
