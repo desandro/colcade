@@ -53,9 +53,11 @@ var proto = Colcade.prototype;
 
 proto.create = function() {
   this.getColumns();
+  this.activeColumns = this.getActiveColumns();
   this.getItemElements();
-  this.resetLayout();
-  window.addEventListener( 'resize', this.onWindowResize.bind(this) );
+  this.layout();
+  this._windowResizeHandler = this.onWindowResize.bind(this);
+  window.addEventListener( 'resize', this._windowResizeHandler );
 };
 
 proto.option = function( options ) {
@@ -72,18 +74,6 @@ proto.getItemElements = function() {
   this.items = makeArray( itemElems );
 };
 
-proto.resetLayout = function( activeColumns ) {
-  this.activeColumns = activeColumns || this.getActiveColumns();
-  // this.colCount = this.activeColumns.length;
-  // reset column heights
-  this.columnHeights = [];
-  for ( var i=0, len = this.activeColumns.length; i < len; i++ ) {
-    this.columnHeights.push(0);
-  }
-
-  this.layout();
-};
-
 proto.getActiveColumns = function() {
   var activeColumns = [];
   for ( var i=0, len = this.columns.length; i < len; i++ ) {
@@ -93,25 +83,29 @@ proto.getActiveColumns = function() {
       activeColumns.push( column );
     }
   }
-  
+
   return activeColumns;
 };
-
-
 
 // --------------------------  -------------------------- //
 
 proto.layout = function() {
-  this.append( this.items );
+  // reset column heights
+  this.columnHeights = [];
+  for ( var i=0, len = this.activeColumns.length; i < len; i++ ) {
+    this.columnHeights.push(0);
+  }
+  // layout all items
+  this.layoutItems( this.items );
 };
 
-proto.append = function( items ) {
+proto.layoutItems = function( items ) {
   for ( var i=0, len = items.length; i < len; i++ ) {
-    this.appendItem( items[i] );
+    this.layoutItem( items[i] );
   }
 };
 
-proto.appendItem = function( item ) {
+proto.layoutItem = function( item ) {
   var minHeight = Math.min.apply( Math, this.columnHeights );
   var index = this.columnHeights.indexOf( minHeight );
 
@@ -136,8 +130,48 @@ proto.onDebouncedResize = function() {
     return;
   }
   // activeColumns changed
-  this.resetLayout( activeColumns );
+  this.activeColumns = activeColumns;
+  this.layout();
 };
+
+// --------------------------  -------------------------- //
+
+proto.destroy = function() {
+  // move items back to container
+  for ( var i=0, len = this.items.length; i < len; i++ ) {
+    var item = this.items[i];
+    this.element.appendChild( item );
+  }
+  // remove events
+  window.removeEventListener( 'resize', this._windowResizeHandler );
+};
+
+// -------------------------- HTML init -------------------------- //
+
+document.addEventListener( 'DOMContentLoaded', function() {
+  var elems = document.querySelectorAll('[data-colcade]');
+
+  for ( var i=0, len = elems.length; i < len; i++ ) {
+    var elem = elems[i];
+    htmlInit( elem );
+  }
+});
+
+function htmlInit( elem ) {
+  // convert attribute "foo: bar, qux: baz" into object
+  var attr = elem.getAttribute('data-colcade');
+  var attrParts = attr.split(',');
+  var options = {};
+  for ( var i=0, len = attrParts.length; i < len; i++ ) {
+    var part = attrParts[i];
+    var pair = part.split(':');
+    var key = pair[0].trim();
+    var value = pair[1].trim();
+    options[ key ] = value;
+  }
+
+  new Colcade( elem, options );
+}
 
 // --------------------------  -------------------------- //
 

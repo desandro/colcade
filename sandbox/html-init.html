@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width" />
 
-<title>basic</title>
+<title>html init</title>
 
 <style>
 * { box-sizing: border-box; }
@@ -44,6 +44,7 @@
 .grid-item {
   background: #09D;
   margin-bottom: 20px;
+  margin-top: 40px;
 }
 
 .grid-item--a { height:  80px; }
@@ -54,9 +55,9 @@
 </head>
 <body>
 
-  <h1>basic</h1>
+  <h1>html init</h1>
 
-<div class="grid">
+<div class="grid" data-colcade="columnSelector: .grid-col, itemSelector: .grid-item">
   <div class="grid-col grid-col--1"></div>
   <div class="grid-col grid-col--2"></div>
   <div class="grid-col grid-col--3"></div>
@@ -89,13 +90,6 @@
 <script src="../bower_components/get-style-property/get-style-property.js"></script>
 <script src="../bower_components/get-size/get-size.js"></script>
 <script src="../colcade.js"></script>
-
-<script>
-var colcade = new Colcade('.grid', {
-  columnSelector: '.grid-col',
-  itemSelector: '.grid-item'
-});
-</script>
 
 </body>
 </html>
