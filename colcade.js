@@ -101,16 +101,10 @@ proto.updateItemElements = function() {
 };
 
 proto.getActiveColumns = function() {
-  var activeColumns = [];
-  for ( var i=0, len = this.columns.length; i < len; i++ ) {
-    var column = this.columns[i];
+  return this.columns.filter( function( column ) {
     var style = getComputedStyle( column );
-    if ( style.display != 'none' ) {
-      activeColumns.push( column );
-    }
-  }
-
-  return activeColumns;
+    return style.display != 'none';
+  });
 };
 
 // --------------------------  -------------------------- //
@@ -124,18 +118,15 @@ proto.layout = function() {
 // private, does not update activeColumns
 proto._layout = function() {
   // reset column heights
-  this.columnHeights = [];
-  for ( var i=0, len = this.activeColumns.length; i < len; i++ ) {
-    this.columnHeights.push(0);
-  }
+  this.columnHeights = this.activeColumns.map( function() {
+    return 0;
+  });
   // layout all items
   this.layoutItems( this.items );
 };
 
 proto.layoutItems = function( items ) {
-  for ( var i=0, len = items.length; i < len; i++ ) {
-    this.layoutItem( items[i] );
-  }
+  items.forEach( this.layoutItem, this );
 };
 
 proto.layoutItem = function( item ) {
@@ -174,7 +165,7 @@ proto.onWindowResize = function() {
   clearTimeout(this.resizeTimeout);
   this.resizeTimeout = setTimeout( function() {
     this.onDebouncedResize();
-  }.bind(this), 100 );
+  }.bind( this ), 100 );
 };
 
 proto.onDebouncedResize = function() {
@@ -191,10 +182,9 @@ proto.onDebouncedResize = function() {
 
 proto.destroy = function() {
   // move items back to container
-  for ( var i=0, len = this.items.length; i < len; i++ ) {
-    var item = this.items[i];
+  this.items.forEach( function( item ) {
     this.element.appendChild( item );
-  }
+  }, this );
   // remove events
   window.removeEventListener( 'resize', this._windowResizeHandler );
   // remove data
@@ -218,13 +208,12 @@ function htmlInit( elem ) {
   var attr = elem.getAttribute('data-colcade');
   var attrParts = attr.split(',');
   var options = {};
-  for ( var i=0, len = attrParts.length; i < len; i++ ) {
-    var part = attrParts[i];
+  attrParts.forEach( function( part ) {
     var pair = part.split(':');
     var key = pair[0].trim();
     var value = pair[1].trim();
     options[ key ] = value;
-  }
+  });
 
   new Colcade( elem, options );
 }
