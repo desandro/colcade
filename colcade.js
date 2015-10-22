@@ -79,9 +79,9 @@ proto.create = function() {
   this.element.colcadeGUID = guid;
   instances[ guid ] = this; // associate via id
 
-  this.getColumns();
+  this.updateColumns();
   this.activeColumns = this.getActiveColumns();
-  this.getItemElements();
+  this.updateItemElements();
   this.layout();
   this._windowResizeHandler = this.onWindowResize.bind(this);
   window.addEventListener( 'resize', this._windowResizeHandler );
@@ -91,12 +91,12 @@ proto.option = function( options ) {
   this.options = extend( this.options, options );
 };
 
-proto.getColumns = function() {
+proto.updateColumns = function() {
   var columns = this.element.querySelectorAll( this.options.columnSelector );
   this.columns = makeArray( columns );
 };
 
-proto.getItemElements = function() {
+proto.updateItemElements = function() {
   var itemElems = this.element.querySelectorAll( this.options.itemSelector );
   this.items = makeArray( itemElems );
 };
@@ -106,7 +106,7 @@ proto.getActiveColumns = function() {
   for ( var i=0, len = this.columns.length; i < len; i++ ) {
     var column = this.columns[i];
     var style = getComputedStyle( column );
-    if ( style.display !== 'none' ) {
+    if ( style.display != 'none' ) {
       activeColumns.push( column );
     }
   }
