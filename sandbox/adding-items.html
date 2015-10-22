@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+
+<title>adding items</title>
+
+<style>
+* { box-sizing: border-box; }
+
+.grid {
+  border: 1px solid;
+}
+
+.grid:after {
+  display: block;
+  content: '';
+  clear: both;
+}
+
+.grid-col {
+  float: left;
+  width: 49%;
+  margin-right: 2%;
+  background: #DDD;
+}
+
+.grid-col--4 { margin-right: 0; }
+
+/* hide two middle */
+.grid-col--2, .grid-col--3 { display: none; }
+
+@media ( min-width: 768px ) {
+  .grid-col { width: 32%; }
+  .grid-col--2 { display: block; }
+}
+
+@media ( min-width: 1200px ) {
+  .grid-col { width: 23.5%; }
+  .grid-col--2, .grid-col--3 { display: block; }
+}
+
+.grid-item {
+  background: #09D;
+  margin-bottom: 20px;
+}
+
+.grid-item--a { height:  60px; }
+.grid-item--b { height: 100px; }
+.grid-item--c { height: 160px; }
+
+button { font-size: 20px; }
+</style>
+
+</head>
+<body>
+
+  <h1>adding items</h1>
+
+<p>
+  <button class="prepend-button">Prepend</button>
+</p>
+
+<div class="grid">
+  <div class="grid-col grid-col--1"></div>
+  <div class="grid-col grid-col--2"></div>
+  <div class="grid-col grid-col--3"></div>
+  <div class="grid-col grid-col--4"></div>
+
+  <div class="grid-item grid-item--b"></div>
+  <div class="grid-item grid-item--a"></div>
+  <div class="grid-item grid-item--c"></div>
+  <div class="grid-item grid-item--a"></div>
+  <div class="grid-item grid-item--a"></div>
+</div>
+
+<p>
+  <button class="append-button">Append</button>
+</p>
+
+
+<script src="../colcade.js"></script>
+
+<script>
+var colcade = new Colcade('.grid', {
+  columnSelector: '.grid-col',
+  itemSelector: '.grid-item'
+});
+
+// -----  ----- //
+
+function getItem() {
+  var item = document.createElement('div');
+  item.classList.add('grid-item');
+  var letter = 'abc'[ Math.floor( Math.random() * 3 ) ];
+  item.classList.add( 'grid-item--' + letter );
+  return item;
+}
+
+function getItems() {
+  var items = [ getItem(), getItem(), getItem() ];
+  var hue = [ 330, 0, 30, 180, 210 ][ Math.floor( Math.random() * 5 ) ];
+  items.forEach( function( item ) {
+    item.style.background = 'hsl(' + hue + ', 90%, 50%)';
+  });
+  return items;
+}
+
+// -----  ----- //
+
+document.querySelector('.append-button').onclick = function() {
+  colcade.append( getItems() );
+}
+
+document.querySelector('.prepend-button').onclick = function() {
+  colcade.prepend( getItems() );
+}
+</script>
+
+</body>
+</html>
