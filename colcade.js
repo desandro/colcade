@@ -1,5 +1,5 @@
 ( function() {
-
+"use strict";
 
 var console = window.console;
 
@@ -223,6 +223,61 @@ Colcade.data = function( elem ) {
   var id = elem && elem.colcadeGUID;
   return id && instances[ id ];
 };
+
+// -------------------------- jQuery -------------------------- //
+
+Colcade.makeJQueryPlugin = function( $ ) {
+  $ = $ || window.jQuery;
+  if ( !$ ) {
+    return;
+  }
+
+  $.fn.colcade = function( arg0 /*, arg1 */) {
+    // method call $().colcade( 'method', { options } )
+    if ( typeof arg0 == 'string' ) {
+      // shift arguments by 1
+      var args = Array.prototype.slice.call( arguments, 1 );
+      return methodCall( this, arg0, args );
+    }
+    // just $().colcade({ options })
+    plainCall( this, arg0 );
+    return this;
+  };
+
+  function methodCall( $elems, methodName, args ) {
+    var returnValue;
+    $elems.each( function( i, elem ) {
+      // get instance
+      var colcade = $.data( elem, 'colcade' );
+      if ( !colcade ) {
+        return;
+      }
+      // apply method, get return value
+      var value = colcade[ methodName ].apply( colcade, args );
+      // set return value if 
+      returnValue = returnValue === undefined ? value : returnValue;
+    });
+    return returnValue !== undefined ? returnValue : $elems;
+  }
+
+  function plainCall( $elems, options ) {
+    $elems.each( function( i, elem ) {
+      var colcade = $.data( elem, 'colcade' );
+      if ( colcade ) {
+        // set options & init
+        colcade.option( options );
+        colcade._init();
+      } else {
+        // initialize new instance
+        colcade = new Colcade( elem, options );
+        $.data( this, 'colcade', colcade );
+      }
+    });
+  }
+};
+
+// try making plugin
+Colcade.makeJQueryPlugin();
 
 // --------------------------  -------------------------- //
 

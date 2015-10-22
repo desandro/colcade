@@ -2,6 +2,7 @@
   "browser": true,
   "undef": true,
   "unused": true,
+  "strict": true,
   "globals": {
     "getSize": false
   }
