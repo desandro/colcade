@@ -80,7 +80,6 @@ proto.create = function() {
   instances[ guid ] = this; // associate via id
 
   this.updateColumns();
-  this.activeColumns = this.getActiveColumns();
   this.updateItemElements();
   this.layout();
   this._windowResizeHandler = this.onWindowResize.bind(this);
@@ -116,55 +115,39 @@ proto.getActiveColumns = function() {
 
 // --------------------------  -------------------------- //
 
+// public, updates activeColumns
 proto.layout = function() {
+  this.activeColumns = this.getActiveColumns();
+  this._layout();
+};
+
+// private, does not update activeColumns
+proto._layout = function() {
   // reset column heights
-  this.columnHeights = this.getResetColumnHeights();
+  this.columnHeights = [];
+  for ( var i=0, len = this.activeColumns.length; i < len; i++ ) {
+    this.columnHeights.push(0);
+  }
   // layout all items
   this.layoutItems( this.items );
 };
 
-proto.getResetColumnHeights = function() {
-  var columnHeights = [];
-  for ( var i=0, len = this.activeColumns.length; i < len; i++ ) {
-    columnHeights.push(0);
+proto.layoutItems = function( items ) {
+  for ( var i=0, len = items.length; i < len; i++ ) {
+    this.layoutItem( items[i] );
   }
-  return columnHeights;
 };
 
-proto.layoutItems = function( items, isPrepending ) {
-  // use reset columnHeights to add to top if prepending
-  var columnHeights = isPrepending ? this.getResetColumnHeights() :
-    this.columnHeights;
-
-  var topChildren;
-  if ( isPrepending ) {
-    topChildren = this.activeColumns.map( function(column) {
-      return column.firstChild;
-    });
-  }
-
-  for ( var i=0, len = items.length; i < len; i++ ) {
-    var item = items[i];
-    // layout item
-    var minHeight = Math.min.apply( Math, columnHeights );
-    var index = columnHeights.indexOf( minHeight );
-    var column = this.activeColumns[ index ];
-    if ( isPrepending ) {
-      var topChild = topChildren[ index ];
-      column.insertBefore( item, topChild );
-    } else {
-      column.appendChild( item );
-    }
-
-    // at least 1px, if item hasn't loaded
-    // we're adding both top and bottom margin here.
-    // Not exactly accurate as they collapse, but it's cool
-    var itemHeight = getOuterHeight( item ) || 1;
-    this.columnHeights[ index ] += itemHeight;
-    if ( isPrepending ) {
-      columnHeights[ index ] += itemHeight;
-    }
-  }
+proto.layoutItem = function( item ) {
+  // layout item by appending to column
+  var minHeight = Math.min.apply( Math, this.columnHeights );
+  var index = this.columnHeights.indexOf( minHeight );
+  this.activeColumns[ index ].appendChild( item );
+  // at least 1px, if item hasn't loaded
+  // we're adding both top and bottom margin here.
+  // Not exactly accurate as they collapse, but it's cool
+  var itemHeight = getOuterHeight( item ) || 1;
+  this.columnHeights[ index ] += itemHeight;
 };
 
 // ----- adding items ----- //
@@ -181,8 +164,8 @@ proto.prepend = function( items ) {
   items = makeArray( items );
   // add items to collection
   this.items = items.concat( this.items );
-  // lay them out
-  this.layoutItems( items, true );
+  // lay out everything
+  this._layout();
 };
 
 // --------------------------  -------------------------- //
