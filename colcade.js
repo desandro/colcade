@@ -91,12 +91,12 @@ proto.option = function( options ) {
 };
 
 proto.updateColumns = function() {
-  var columns = this.element.querySelectorAll( this.options.columnSelector );
+  var columns = this.element.querySelectorAll( this.options.columns );
   this.columns = makeArray( columns );
 };
 
 proto.updateItemElements = function() {
-  var itemElems = this.element.querySelectorAll( this.options.itemSelector );
+  var itemElems = this.element.querySelectorAll( this.options.items );
   this.items = makeArray( itemElems );
 };
 
