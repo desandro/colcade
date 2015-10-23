@@ -76,15 +76,15 @@ proto.option = function( options ) {
 
 proto.create = function() {
   this.errorCheck();
-
   // add guid for Colcade.data
   var guid = this.guid = ++GUID;
   this.element.colcadeGUID = guid;
   instances[ guid ] = this; // associate via id
-
+  // update initial properties & layout
   this.updateColumns();
-  this.updateItemElements();
+  this.updateItems();
   this.layout();
+  // events
   this._windowResizeHandler = this.onWindowResize.bind(this);
   this._loadHandler = this.onLoad.bind(this);
   window.addEventListener( 'resize', this._windowResizeHandler );
@@ -113,7 +113,7 @@ proto.updateColumns = function() {
   this.columns = makeArray( columns );
 };
 
-proto.updateItemElements = function() {
+proto.updateItems = function() {
   var itemElems = this.element.querySelectorAll( this.options.items );
   this.items = makeArray( itemElems );
 };
@@ -208,14 +208,14 @@ proto.onDebouncedResize = function() {
   }
   // activeColumns changed
   this.activeColumns = activeColumns;
-  this.layout();
+  this._layout();
 };
 
 proto.onLoad = function( event ) {
   this.measureColumnHeight( event.target );
 };
 
-// --------------------------  -------------------------- //
+// ----- destroy ----- //
 
 proto.destroy = function() {
   // move items back to container
