@@ -1,8 +1,6 @@
 ( function() {
 "use strict";
 
-var console = window.console;
-
 function extend( a, b ) {
   for ( var prop in b ) {
     a[ prop ] = b[ prop ];
@@ -53,15 +51,22 @@ var instances = {};
 // --------------------------  -------------------------- //
 
 function Colcade( element, options ) {
-  this.element = getQueryElement( element );
+  element = getQueryElement( element );
+
+  // do not initialize twice on same element
+  if ( element && element.colcadeGUID ) {
+    var instance = instances[ element.colcadeGUID ];
+    instance.option( options );
+    return instance;
+  }
+
+  this.element = element;
   // options
-  this.options = extend( {}, this.constructor.defaults );
+  this.options = {};
   this.option( options );
   // kick things off
   this.create();
 }
-
-Colcade.defaults = {};
 
 var proto = Colcade.prototype;
 
@@ -81,7 +86,9 @@ proto.create = function() {
   this.updateItemElements();
   this.layout();
   this._windowResizeHandler = this.onWindowResize.bind(this);
+  this._loadHandler = this.onLoad.bind(this);
   window.addEventListener( 'resize', this._windowResizeHandler );
+  this.element.addEventListener( 'load', this._loadHandler );
 };
 
 proto.errorCheck = function() {
@@ -170,7 +177,22 @@ proto.prepend = function( items ) {
   this._layout();
 };
 
-// --------------------------  -------------------------- //
+// ----- measure column height ----- //
+
+proto.measureColumnHeight = function( elem ) {
+  var boundingRect = this.element.getBoundingClientRect();
+  this.activeColumns.forEach( function( column, i ) {
+    // if elem, measure only that column
+    // if no elem, measure all columns
+    if ( !elem || column.contains( elem ) ) {
+      var lastChildRect = column.lastElementChild.getBoundingClientRect();
+      // not an exact calculation as it includes top border, and excludes item bottom margin
+      this.columnHeights[ i ] = lastChildRect.bottom - boundingRect.top;
+    }
+  }, this );
+};
+
+// ----- events ----- //
 
 proto.onWindowResize = function() {
   clearTimeout(this.resizeTimeout);
@@ -189,6 +211,10 @@ proto.onDebouncedResize = function() {
   this.layout();
 };
 
+proto.onLoad = function( event ) {
+  this.measureColumnHeight( event.target );
+};
+
 // --------------------------  -------------------------- //
 
 proto.destroy = function() {
@@ -198,6 +224,7 @@ proto.destroy = function() {
   }, this );
   // remove events
   window.removeEventListener( 'resize', this._windowResizeHandler );
+  this.element.removeEventListener( 'load', this._loadHandler );
   // remove data
   delete this.element.colcadeGUID;
   delete instances[ this.guid ];
