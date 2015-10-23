@@ -53,15 +53,7 @@ var instances = {};
 // --------------------------  -------------------------- //
 
 function Colcade( element, options ) {
-  element = getQueryElement( element );
-  if ( !element ) {
-    if ( console ) {
-      console.error( 'Bad element for Colcade: ' + ( element ) );
-    }
-    return;
-  }
-
-  this.element = element;
+  this.element = getQueryElement( element );
   // options
   this.options = extend( {}, this.constructor.defaults );
   this.option( options );
@@ -73,7 +65,13 @@ Colcade.defaults = {};
 
 var proto = Colcade.prototype;
 
+proto.option = function( options ) {
+  this.options = extend( this.options, options );
+};
+
 proto.create = function() {
+  this.errorCheck();
+
   // add guid for Colcade.data
   var guid = this.guid = ++GUID;
   this.element.colcadeGUID = guid;
@@ -86,8 +84,21 @@ proto.create = function() {
   window.addEventListener( 'resize', this._windowResizeHandler );
 };
 
-proto.option = function( options ) {
-  this.options = extend( this.options, options );
+proto.errorCheck = function() {
+  var errors = [];
+  if ( !this.element ) {
+    errors.push( 'Bad element: ' + this.element );
+  }
+  if ( !this.options.columns ) {
+    errors.push( 'columns option required: ' + this.options.columns );
+  }
+  if ( !this.options.items ) {
+    errors.push( 'items option required: ' + this.options.items );
+  }
+
+  if ( errors.length ) {
+    throw new Error( '[Colcade error] ' + errors.join('. ') );
+  }
 };
 
 proto.updateColumns = function() {
