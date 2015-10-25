@@ -88,7 +88,7 @@ proto.create = function() {
   this._windowResizeHandler = this.onWindowResize.bind(this);
   this._loadHandler = this.onLoad.bind(this);
   window.addEventListener( 'resize', this._windowResizeHandler );
-  this.element.addEventListener( 'load', this._loadHandler );
+  this.element.addEventListener( 'load', this._loadHandler, true );
 };
 
 proto.errorCheck = function() {
@@ -230,7 +230,7 @@ proto.destroy = function() {
   }, this );
   // remove events
   window.removeEventListener( 'resize', this._windowResizeHandler );
-  this.element.removeEventListener( 'load', this._loadHandler );
+  this.element.removeEventListener( 'load', this._loadHandler, true );
   // remove data
   delete this.element.colcadeGUID;
   delete instances[ this.guid ];
