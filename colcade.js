@@ -16,7 +16,7 @@ function makeArray( obj ) {
     ary = obj;
   } else if ( obj && typeof obj.length == 'number' ) {
     // convert nodeList to array
-    for ( var i=0, len = obj.length; i < len; i++ ) {
+    for ( var i=0; i < obj.length; i++ ) {
       ary.push( obj[i] );
     }
   } else {
@@ -24,6 +24,13 @@ function makeArray( obj ) {
     ary.push( obj );
   }
   return ary;
+}
+
+// get array of elements
+function querySelect( selector, elem ) {
+  elem = elem || document;
+  var elems = elem.querySelectorAll( selector );
+  return makeArray( elems );
 }
 
 function getOuterHeight( elem ) {
@@ -45,7 +52,7 @@ function getQueryElement( elem ) {
 
 // globally unique identifiers
 var GUID = 0;
-// internal store of all Flickity intances
+// internal store of all Colcade intances
 var instances = {};
 
 // --------------------------  -------------------------- //
@@ -81,9 +88,7 @@ proto.create = function() {
   this.element.colcadeGUID = guid;
   instances[ guid ] = this; // associate via id
   // update initial properties & layout
-  this.updateColumns();
-  this.updateItems();
-  this.layout();
+  this.reload();
   // events
   this._windowResizeHandler = this.onWindowResize.bind(this);
   this._loadHandler = this.onLoad.bind(this);
@@ -108,14 +113,19 @@ proto.errorCheck = function() {
   }
 };
 
+// update properties and do layout
+proto.reload = function() {
+  this.updateColumns();
+  this.updateItems();
+  this.layout();
+};
+
 proto.updateColumns = function() {
-  var columns = this.element.querySelectorAll( this.options.columns );
-  this.columns = makeArray( columns );
+  this.columns = querySelect( this.options.columns, this.element );
 };
 
 proto.updateItems = function() {
-  var itemElems = this.element.querySelectorAll( this.options.items );
-  this.items = makeArray( itemElems );
+  this.items = querySelect( this.options.items, this.element );
 };
 
 proto.getActiveColumns = function() {
@@ -125,7 +135,7 @@ proto.getActiveColumns = function() {
   });
 };
 
-// --------------------------  -------------------------- //
+// ----- layout ----- //
 
 // public, updates activeColumns
 proto.layout = function() {
@@ -239,12 +249,8 @@ proto.destroy = function() {
 // -------------------------- HTML init -------------------------- //
 
 document.addEventListener( 'DOMContentLoaded', function() {
-  var elems = document.querySelectorAll('[data-colcade]');
-
-  for ( var i=0, len = elems.length; i < len; i++ ) {
-    var elem = elems[i];
-    htmlInit( elem );
-  }
+  var dataElems = querySelect('[data-colcade]');
+  dataElems.forEach( htmlInit );
 });
 
 function htmlInit( elem ) {
@@ -298,7 +304,7 @@ Colcade.makeJQueryPlugin = function( $ ) {
       }
       // apply method, get return value
       var value = colcade[ methodName ].apply( colcade, args );
-      // set return value if 
+      // set return value if value is returned, use only first value
       returnValue = returnValue === undefined ? value : returnValue;
     });
     return returnValue !== undefined ? returnValue : $elems;
