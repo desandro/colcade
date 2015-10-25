@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+
+<title>images</title>
+
+<style>
+* { box-sizing: border-box; }
+
+.grid {
+  border: 1px solid;
+}
+
+.grid:after {
+  display: block;
+  content: '';
+  clear: both;
+}
+
+.grid-col {
+  float: left;
+  width: 49%;
+  margin-right: 2%;
+  background: #DDD;
+}
+
+.grid-col--4 { margin-right: 0; }
+
+/* hide two middle */
+.grid-col--2, .grid-col--3 { display: none; }
+
+@media ( min-width: 768px ) {
+  .grid-col { width: 32%; }
+  .grid-col--2 { display: block; }
+}
+
+@media ( min-width: 1200px ) {
+  .grid-col { width: 23.5%; }
+  .grid-col--2, .grid-col--3 { display: block; }
+}
+
+.grid-item {
+  background: #333;
+  min-height: 100px;
+}
+
+.grid-item img {
+  display: block;
+  width: 100%;
+}
+
+</style>
+
+</head>
+<body>
+
+  <h1>images</h1>
+
+<div class="grid" data-colcade="columns: .grid-col, items: .grid-item">
+  <div class="grid-col grid-col--1"></div>
+  <div class="grid-col grid-col--2"></div>
+  <div class="grid-col grid-col--3"></div>
+  <div class="grid-col grid-col--4"></div>
+
+  <div class="grid-item"><img src="http://i.imgur.com/bwy74ok.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/bAZWoqx.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/PgmEBSB.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/aboaFoB.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/LkmcILl.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/ERMbVdn.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/q9zO6tw.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/r8p3Xgq.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/hODreXI.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/UORFJ3w.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/lBKi66i.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/9xYjgCk.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/4O7U1Ob.jpg" /></div>
+  <div class="grid-item"><img src="http://i.imgur.com/8lEJtbg.jpg" /></div>
+</div>
+
+<script src="../colcade.js"></script>
+
+</body>
+</html>

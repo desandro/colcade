@@ -203,7 +203,13 @@ proto.onWindowResize = function() {
 
 proto.onDebouncedResize = function() {
   var activeColumns = this.getActiveColumns();
-  if ( activeColumns == this.activeColumns ) {
+  // check if columns changed
+  var isSameLength = activeColumns.length == this.activeColumns.length;
+  var isSameColumns = true;
+  this.activeColumns.forEach( function( column, i ) {
+    isSameColumns = isSameColumns && column == activeColumns[i];
+  });
+  if ( isSameLength && isSameColumns ) {
     return;
   }
   // activeColumns changed
