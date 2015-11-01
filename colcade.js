@@ -1,60 +1,6 @@
 ( function() {
 "use strict";
 
-function extend( a, b ) {
-  for ( var prop in b ) {
-    a[ prop ] = b[ prop ];
-  }
-  return a;
-}
-
-// turn element or nodeList into an array
-function makeArray( obj ) {
-  var ary = [];
-  if ( Array.isArray( obj ) ) {
-    // use object if already an array
-    ary = obj;
-  } else if ( obj && typeof obj.length == 'number' ) {
-    // convert nodeList to array
-    for ( var i=0; i < obj.length; i++ ) {
-      ary.push( obj[i] );
-    }
-  } else {
-    // array of single index
-    ary.push( obj );
-  }
-  return ary;
-}
-
-// get array of elements
-function querySelect( selector, elem ) {
-  elem = elem || document;
-  var elems = elem.querySelectorAll( selector );
-  return makeArray( elems );
-}
-
-function getOuterHeight( elem ) {
-  var style = getComputedStyle( elem );
-  var marginTop = parseFloat( style.marginTop );
-  var marginBottom = parseFloat( style.marginBottom );
-  // set non-number values to 0, like auto
-  marginTop = isNaN( marginTop ) ? 0 : marginTop;
-  marginBottom = isNaN( marginBottom ) ? 0 : marginBottom;
-  return elem.offsetHeight + marginTop + marginBottom;
-}
-
-function getQueryElement( elem ) {
-  if ( typeof elem == 'string' ) {
-    elem = document.querySelector( elem );
-  }
-  return elem;
-}
-
-// globally unique identifiers
-var GUID = 0;
-// internal store of all Colcade intances
-var instances = {};
-
 // --------------------------  -------------------------- //
 
 function Colcade( element, options ) {
@@ -80,6 +26,11 @@ var proto = Colcade.prototype;
 proto.option = function( options ) {
   this.options = extend( this.options, options );
 };
+
+// globally unique identifiers
+var GUID = 0;
+// internal store of all Colcade intances
+var instances = {};
 
 proto.create = function() {
   this.errorCheck();
@@ -163,28 +114,36 @@ proto.layoutItem = function( item ) {
   var index = this.columnHeights.indexOf( minHeight );
   this.activeColumns[ index ].appendChild( item );
   // at least 1px, if item hasn't loaded
-  // we're adding both top and bottom margin here.
-  // Not exactly accurate as they collapse, but it's cool
+  // Not exactly accurate as margins collapse, but it's cool
   var itemHeight = getOuterHeight( item ) || 1;
   this.columnHeights[ index ] += itemHeight;
 };
 
 // ----- adding items ----- //
 
-proto.append = function( items ) {
-  items = makeArray( items );
+proto.append = function( elems ) {
+  var items = this.getQueryItems( elems );
   // add items to collection
   this.items = this.items.concat( items );
   // lay them out
   this.layoutItems( items );
 };
 
-proto.prepend = function( items ) {
-  items = makeArray( items );
+proto.prepend = function( elems ) {
+  var items = this.getQueryItems( elems );
   // add items to collection
   this.items = items.concat( this.items );
   // lay out everything
   this._layout();
+};
+
+proto.getQueryItems = function( elems ) {
+  elems = makeArray( elems );
+  var fragment = document.createDocumentFragment();
+  elems.forEach( function( elem ) {
+    fragment.appendChild( elem );
+  });
+  return querySelect( this.options.items, fragment );
 };
 
 // ----- measure column height ----- //
@@ -316,11 +275,11 @@ Colcade.makeJQueryPlugin = function( $ ) {
       if ( colcade ) {
         // set options & init
         colcade.option( options );
-        colcade._init();
+        colcade.layout();
       } else {
         // initialize new instance
         colcade = new Colcade( elem, options );
-        $.data( this, 'colcade', colcade );
+        $.data( elem, 'colcade', colcade );
       }
     });
   }
@@ -328,6 +287,57 @@ Colcade.makeJQueryPlugin = function( $ ) {
 
 // try making plugin
 Colcade.makeJQueryPlugin();
+
+// -------------------------- utils -------------------------- //
+
+function extend( a, b ) {
+  for ( var prop in b ) {
+    a[ prop ] = b[ prop ];
+  }
+  return a;
+}
+
+// turn element or nodeList into an array
+function makeArray( obj ) {
+  var ary = [];
+  if ( Array.isArray( obj ) ) {
+    // use object if already an array
+    ary = obj;
+  } else if ( obj && typeof obj.length == 'number' ) {
+    // convert nodeList to array
+    for ( var i=0; i < obj.length; i++ ) {
+      ary.push( obj[i] );
+    }
+  } else {
+    // array of single index
+    ary.push( obj );
+  }
+  return ary;
+}
+
+// get array of elements
+function querySelect( selector, elem ) {
+  elem = elem || document;
+  var elems = elem.querySelectorAll( selector );
+  return makeArray( elems );
+}
+
+function getOuterHeight( elem ) {
+  var style = getComputedStyle( elem );
+  var marginTop = parseFloat( style.marginTop );
+  var marginBottom = parseFloat( style.marginBottom );
+  // set non-number values to 0, like auto
+  marginTop = isNaN( marginTop ) ? 0 : marginTop;
+  marginBottom = isNaN( marginBottom ) ? 0 : marginBottom;
+  return elem.offsetHeight + Math.max( marginTop, marginBottom );
+}
+
+function getQueryElement( elem ) {
+  if ( typeof elem == 'string' ) {
+    elem = document.querySelector( elem );
+  }
+  return elem;
+}
 
 // --------------------------  -------------------------- //
 
