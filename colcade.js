@@ -207,7 +207,7 @@ proto.destroy = function() {
 
 // -------------------------- HTML init -------------------------- //
 
-document.addEventListener( 'DOMContentLoaded', function() {
+docReady( function() {
   var dataElems = querySelect('[data-colcade]');
   dataElems.forEach( htmlInit );
 });
@@ -337,6 +337,14 @@ function getQueryElement( elem ) {
     elem = document.querySelector( elem );
   }
   return elem;
+}
+
+function docReady( onReady ) {
+  if ( document.readyState == 'complete' ) {
+    onReady();
+    return;
+  }
+  document.addEventListener( 'DOMContentLoaded', onReady );
 }
 
 // --------------------------  -------------------------- //
