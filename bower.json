@@ -1,0 +1,20 @@
+{
+  "name": "colcade",
+  "description": "Lightweight masonry layout",
+  "main": "colcade.js",
+  "authors": [
+    "David DeSandro"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "masonry"
+  ],
+  "homepage": "https://github.com/desandro/colcade",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "colcade",
+  "version": "0.1.0",
+  "description": "Lightweight masonry layout",
+  "main": "colcade.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/desandro/colcade.git"
+  },
+  "keywords": [
+    "masonry"
+  ],
+  "author": "David DeSandro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/desandro/colcade/issues"
+  },
+  "homepage": "https://github.com/desandro/colcade#readme"
+}
