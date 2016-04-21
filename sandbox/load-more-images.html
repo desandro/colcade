@@ -99,9 +99,8 @@ document.querySelector('.load-more-button').onclick = function() {
 function makeItem() {
   var item = document.createElement('div');
   item.classList.add('grid-item');
-  var width = Math.floor( Math.random() * 300 + 100 );
-  var height = Math.floor( Math.random() * 300 + 100 );
-  item.innerHTML = '<img src="http://lorempixel.com/' + width + '/' + height + '" />';
+  var height = Math.floor( Math.random() * 400 + 200 );
+  item.innerHTML = '<img src="http://lorempixel.com/400/' + height + '" />';
   return item;
 }
 
