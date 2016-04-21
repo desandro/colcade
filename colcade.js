@@ -41,8 +41,8 @@ proto.create = function() {
   // update initial properties & layout
   this.reload();
   // events
-  this._windowResizeHandler = this.onWindowResize.bind(this);
-  this._loadHandler = this.onLoad.bind(this);
+  this._windowResizeHandler = this.onWindowResize.bind( this );
+  this._loadHandler = this.onLoad.bind( this );
   window.addEventListener( 'resize', this._windowResizeHandler );
   this.element.addEventListener( 'load', this._loadHandler, true );
 };
@@ -163,7 +163,7 @@ proto.measureColumnHeight = function( elem ) {
 // ----- events ----- //
 
 proto.onWindowResize = function() {
-  clearTimeout(this.resizeTimeout);
+  clearTimeout( this.resizeTimeout );
   this.resizeTimeout = setTimeout( function() {
     this.onDebouncedResize();
   }.bind( this ), 100 );
