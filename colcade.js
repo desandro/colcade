@@ -114,9 +114,8 @@ proto.layoutItem = function( item ) {
   var index = this.columnHeights.indexOf( minHeight );
   this.activeColumns[ index ].appendChild( item );
   // at least 1px, if item hasn't loaded
-  // Not exactly accurate as margins collapse, but it's cool
-  var itemHeight = getOuterHeight( item ) || 1;
-  this.columnHeights[ index ] += itemHeight;
+  // Not exactly accurate, but it's cool
+  this.columnHeights[ index ] += item.offsetHeight || 1;
 };
 
 // ----- adding items ----- //
@@ -320,16 +319,6 @@ function querySelect( selector, elem ) {
   elem = elem || document;
   var elems = elem.querySelectorAll( selector );
   return makeArray( elems );
-}
-
-function getOuterHeight( elem ) {
-  var style = getComputedStyle( elem );
-  var marginTop = parseFloat( style.marginTop );
-  var marginBottom = parseFloat( style.marginBottom );
-  // set non-number values to 0, like auto
-  marginTop = isNaN( marginTop ) ? 0 : marginTop;
-  marginBottom = isNaN( marginBottom ) ? 0 : marginBottom;
-  return elem.offsetHeight + Math.max( marginTop, marginBottom );
 }
 
 function getQueryElement( elem ) {
