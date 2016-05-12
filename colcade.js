@@ -1,7 +1,30 @@
-( function() {
-"use strict";
+/*!
+ * Colcade v0.2.0
+ * Lightweight masonry layout
+ * by David DeSandro
+ * MIT license
+ */
 
-// --------------------------  -------------------------- //
+/*jshint browser: true, undef: true, unused: true */
+
+( function( window, factory ) {
+  // universal module definition
+  /*jshint strict: false */
+  /*global define: false, module: false */
+  if ( typeof define == 'function' && define.amd ) {
+    // AMD
+    define( factory );
+  } else if ( typeof module == 'object' && module.exports ) {
+    // CommonJS
+    module.exports = factory();
+  } else {
+    // browser global
+    window.Colcade = factory();
+  }
+
+}( window, function factory() {
+
+// -------------------------- Colcade -------------------------- //
 
 function Colcade( element, options ) {
   element = getQueryElement( element );
@@ -336,8 +359,8 @@ function docReady( onReady ) {
   document.addEventListener( 'DOMContentLoaded', onReady );
 }
 
-// --------------------------  -------------------------- //
+// -------------------------- end -------------------------- //
 
-window.Colcade = Colcade;
+return Colcade;
 
-})();
+}));

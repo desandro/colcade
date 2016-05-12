@@ -1,10 +1,10 @@
 # Colcade
 
-_Lightweight, resilient Masonry_
+_Lightweight masonry layout_
 
 ## Colcade vs. Masonry
 
-Masonry is great, but it has grown big as it has grown older. Colcade is designed to be small & fast. I recommend using Colcade over Masonry, but read over this feature comparison.
+[Masonry is great](http://masonry.desandro.com), but it has grown big as it has grown older. Colcade is designed to be small & fast. I recommend using Colcade over Masonry, but read over this feature comparison.
 
 ### Same features
 
@@ -39,6 +39,25 @@ OK                |  No
 + No [fitWidth centering](http://masonry.desandro.com/options.html#fitwidth)
 
 ## Install
+
+Download: [colcade.js](https://npmcdn.com/colcade@0/colcade.js)
+
+CDN:
+
+``` html
+<script src="https://npmcdn.com/colcade@0/colcade.js"></script>
+```
+
+[npm](https://www.npmjs.com/package/colcade): `npm install colcade`
+
+Bower: `bower install colcade`
+
+## Demos
+
++ [Basic, HTML init](http://codepen.io/desandro/pen/vGPVOR)
++ [jQuery](http://codepen.io/desandro/pen/vGPVOR)
++ [Vanilla JS](http://codepen.io/desandro/pen/EKMdjN)
++ [Images](http://codepen.io/desandro/pen/pyYxvz)
 
 ## Usage
 
@@ -88,6 +107,8 @@ Sizing of the columns is handled by your own CSS. Change the number of columns b
 }
 ```
 
+[Edit float demo on CodePen](http://codepen.io/desandro/pen/EKMdxg)
+
 ``` css
 /* with flexbox */
 .grid {
@@ -118,11 +139,13 @@ Sizing of the columns is handled by your own CSS. Change the number of columns b
 }
 ```
 
+[Edit flexbox demo on CodePen](http://codepen.io/desandro/pen/RadeWy)
+
 ### Initialize Colcade
 
 Set selectors for column and item elements in the options.
 
-With jQuery
+With jQuery. [Edit jQuery demo on CodePen](http://codepen.io/desandro/pen/vGPVOR)
 
 ``` js
 $('.grid').colcade({
@@ -131,7 +154,7 @@ $('.grid').colcade({
 })
 ```
 
-With vanilla JS
+With vanilla JS. [Edit vanilla JS demo on CodePen](http://codepen.io/desandro/pen/EKMdjN)
 
 ``` js
 // element as first argument
@@ -148,7 +171,7 @@ var colc = new Colcade( '.grid', {
 });
 ```
 
-With HTML
+With HTML. [Edit HTML demo on CodePen](http://codepen.io/desandro/pen/EKMdxg)
 
 ``` html
 <div class="grid" data-colcade="columns: .grid-col, items: .grid-item">
@@ -156,3 +179,43 @@ With HTML
 </div>
 ```
 
+## Methods
+
+### append
+
+Add items to end of layout.
+
+``` js
+// jQuery
+$grid.colcade( 'append', items )
+// vanilla JS
+colc.append( items )
+```
+
+### prepend
+
+Add items to beginning of layout.
+
+``` js
+// jQuery
+$grid.colcade( 'prepend', items )
+// vanilla JS
+colc.prepend( items )
+```
+
+### destroy
+
+Remove Colcade behavior completely.
+
+``` js
+// jQuery
+$grid.colcade('destroy')
+// vanilla JS
+colc.destroy()
+```
+
+---
+
+By David DeSandro
+
+MIT License. Have at it.
