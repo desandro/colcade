@@ -40,12 +40,12 @@ OK                |  No
 
 ## Install
 
-Download: [colcade.js](https://npmcdn.com/colcade@0/colcade.js)
+Download: [colcade.js](https://unpkg.com/colcade@0/colcade.js)
 
 CDN:
 
 ``` html
-<script src="https://npmcdn.com/colcade@0/colcade.js"></script>
+<script src="https://unpkg.com/colcade@0/colcade.js"></script>
 ```
 
 [npm](https://www.npmjs.com/package/colcade): `npm install colcade`
