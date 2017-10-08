@@ -209,7 +209,7 @@ proto.onDebouncedResize = function() {
 };
 
 proto.refresh = function() {
-	this.onDebouncedResize();
+  this.onDebouncedResize();
 };
 
 proto.onLoad = function( event ) {
