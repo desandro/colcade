@@ -208,6 +208,10 @@ proto.onDebouncedResize = function() {
   this._layout();
 };
 
+proto.refresh = function() {
+	this.onDebouncedResize();
+};
+
 proto.onLoad = function( event ) {
   this.measureColumnHeight( event.target );
 };
