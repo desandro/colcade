@@ -142,7 +142,7 @@ proto.layoutItem = function( item ) {
 };
 
 proto.refresh = function() {
-    var activeColumns = this.getActiveColumns();
+  var activeColumns = this.getActiveColumns();
   // check if columns changed
   var isSameLength = activeColumns.length == this.activeColumns.length;
   var isSameColumns = true;
