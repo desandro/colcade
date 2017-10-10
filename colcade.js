@@ -188,7 +188,8 @@ proto.getQueryItems = function( elems ) {
 
 proto.measureColumnHeight = function( elem ) {
   var boundingRect = this.element.getBoundingClientRect();
-  var column, length = this.activeColumns.length;
+  var column;
+  var length = this.activeColumns.length;
   for(var i=length; i>=0; i--){ //horribly looking but fast
     column = this.activeColumns[i];
     if ( !elem || column.contains( elem ) ) {
