@@ -344,8 +344,11 @@ function makeArray( obj ) {
     ary = obj;
   } else if ( obj && typeof obj.length == 'number' ) {
     // convert nodeList to array
-    for ( var i=0; i < obj.length; i++ ) {
-      ary.push( obj[i] );
+    var length = obj.length;
+    var l = length-1;
+    ary.length = length;
+    for ( var i=l; i >= 0 ; i-- ) {
+      ary[i] =  obj[i];
     }
   } else {
     // array of single index
