@@ -128,7 +128,10 @@ proto._layout = function() {
 };
 
 proto.layoutItems = function( items ) {
-  items.forEach( this.layoutItem, this );
+  var length = items.length;
+  for (var i = 0; i < length; i++) {
+    this.layoutItem(items[i]);
+  }
 };
 
 proto.layoutItem = function( item ) {
@@ -146,9 +149,12 @@ proto.refresh = function() {
   // check if columns changed
   var isSameLength = activeColumns.length == this.activeColumns.length;
   var isSameColumns = true;
-  this.activeColumns.forEach( function( column, i ) {
-    isSameColumns = isSameColumns && column == activeColumns[i];
-  });
+  var length = this.activeColumns.length;
+  
+  for (var i = 0; i < length; i++) {
+    isSameColumns = isSameColumns && this.activeColumns[i] == this.activeColumns[i]
+  }
+
   if ( isSameLength && isSameColumns ) {
     return;
   }
@@ -178,9 +184,10 @@ proto.prepend = function( elems ) {
 proto.getQueryItems = function( elems ) {
   elems = makeArray( elems );
   var fragment = document.createDocumentFragment();
-  elems.forEach( function( elem ) {
-    fragment.appendChild( elem );
-  });
+  var length = elems.length;
+  for(var i=0; i<length; i++) {
+    fragment.appendChild( elems[i] );
+  }
   return querySelect( this.options.items, fragment );
 };
 
@@ -221,9 +228,10 @@ proto.onDebouncedResize = function() {
 
 proto.destroy = function() {
   // move items back to container
-  this.items.forEach( function( item ) {
-    this.element.appendChild( item );
-  }, this );
+  var length = this.items.length;
+  for (var i=length; i>=0; i--) {
+    this.element.prependChild( this.items[i] );
+  }
   // remove events
   window.removeEventListener( 'resize', this._windowResizeHandler );
   this.element.removeEventListener( 'load', this._loadHandler, true );
@@ -236,7 +244,10 @@ proto.destroy = function() {
 
 docReady( function() {
   var dataElems = querySelect('[data-colcade]');
-  dataElems.forEach( htmlInit );
+  var length = dataElems.length;
+  for (var i=0; i<length; i++) {
+    htmlInit( dataElems[i] )
+  }
 });
 
 function htmlInit( elem ) {
@@ -244,12 +255,13 @@ function htmlInit( elem ) {
   var attr = elem.getAttribute('data-colcade');
   var attrParts = attr.split(',');
   var options = {};
-  attrParts.forEach( function( part ) {
-    var pair = part.split(':');
+  var length = attrParts.length;
+  for (var i=0; i<length; i++) {
+    var pair = attrParts[i].split(':');
     var key = pair[0].trim();
     var value = pair[1].trim();
     options[ key ] = value;
-  });
+  }
 
   new Colcade( elem, options );
 }
