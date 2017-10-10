@@ -141,6 +141,22 @@ proto.layoutItem = function( item ) {
   this.columnHeights[ index ] += item.offsetHeight || 1;
 };
 
+proto.refresh = function() {
+  var activeColumns = this.getActiveColumns();
+  // check if columns changed
+  var isSameLength = activeColumns.length == this.activeColumns.length;
+  var isSameColumns = true;
+  this.activeColumns.forEach( function( column, i ) {
+    isSameColumns = isSameColumns && column == activeColumns[i];
+  });
+  if ( isSameLength && isSameColumns ) {
+    return;
+  }
+  // activeColumns changed
+  this.activeColumns = activeColumns;
+  this._layout();
+};
+
 // ----- adding items ----- //
 
 proto.append = function( elems ) {
@@ -192,24 +208,12 @@ proto.onWindowResize = function() {
   }.bind( this ), 100 );
 };
 
-proto.onDebouncedResize = function() {
-  var activeColumns = this.getActiveColumns();
-  // check if columns changed
-  var isSameLength = activeColumns.length == this.activeColumns.length;
-  var isSameColumns = true;
-  this.activeColumns.forEach( function( column, i ) {
-    isSameColumns = isSameColumns && column == activeColumns[i];
-  });
-  if ( isSameLength && isSameColumns ) {
-    return;
-  }
-  // activeColumns changed
-  this.activeColumns = activeColumns;
-  this._layout();
-};
-
 proto.onLoad = function( event ) {
   this.measureColumnHeight( event.target );
+};
+
+proto.onDebouncedResize = function() {
+  this.refresh();
 };
 
 // ----- destroy ----- //
