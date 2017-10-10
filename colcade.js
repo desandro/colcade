@@ -188,15 +188,14 @@ proto.getQueryItems = function( elems ) {
 
 proto.measureColumnHeight = function( elem ) {
   var boundingRect = this.element.getBoundingClientRect();
-  this.activeColumns.forEach( function( column, i ) {
-    // if elem, measure only that column
-    // if no elem, measure all columns
+  var column = this;
+  for(var i=this.activeColumns; i>=0; i--){ //horribly looking but fast
     if ( !elem || column.contains( elem ) ) {
       var lastChildRect = column.lastElementChild.getBoundingClientRect();
       // not an exact calculation as it includes top border, and excludes item bottom margin
       this.columnHeights[ i ] = lastChildRect.bottom - boundingRect.top;
     }
-  }, this );
+  }
 };
 
 // ----- events ----- //
