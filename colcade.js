@@ -197,7 +197,7 @@ proto.measureColumnHeight = function( elem ) {
   var boundingRect = this.element.getBoundingClientRect();
   var column;
   var length = this.activeColumns.length;
-  for(var i=length; i>=0; i--){ //horribly looking but fast
+  for(var i=length-1; i>=0; i--){ //horribly looking but fast
     column = this.activeColumns[i];
     if ( !elem || column.contains( elem ) ) {
       var lastChildRect = column.lastElementChild.getBoundingClientRect();
@@ -229,7 +229,7 @@ proto.onDebouncedResize = function() {
 proto.destroy = function() {
   // move items back to container
   var length = this.items.length;
-  for (var i=length; i>=0; i--) {
+  for (var i=length-1; i>=0; i--) {
     this.element.prependChild( this.items[i] );
   }
   // remove events
