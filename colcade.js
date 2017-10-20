@@ -109,11 +109,22 @@ proto.getActiveColumns = function() {
   });
 };
 
+proto.getActiveColumnsClone = function() {
+    var activeColumnsClone = document.createDocumentFragment()
+    var length = this.activeColumns.length
+    for (var i = 0; i < length; i++) {
+      var li = document.createElement('li')
+      activeColumnsClone.appendChild(li)
+    }
+    return activeColumnsClone.querySelectorAll('li');
+}
+
 // ----- layout ----- //
 
 // public, updates activeColumns
 proto.layout = function() {
   this.activeColumns = this.getActiveColumns();
+  this.activeColumnsClone = this.getActiveColumnsClone();
   this._layout();
 };
 
@@ -132,13 +143,21 @@ proto.layoutItems = function( items ) {
   for (var i = 0; i < length; i++) {
     this.layoutItem(items[i]);
   }
+  this.renderToActiveColumns( this.activeColumnsClone );
 };
+
+proto.renderToActiveColumns = function( items ) {
+    var length = this.activeColumns.length
+    for (let i = 0; i < length; i++) {
+      this.activeColumns[ i ].appendChild( items[ i ] );
+    }
+}
 
 proto.layoutItem = function( item ) {
   // layout item by appending to column
   var minHeight = Math.min.apply( Math, this.columnHeights );
   var index = this.columnHeights.indexOf( minHeight );
-  this.activeColumns[ index ].appendChild( item );
+  this.activeColumnsClone[ index ].appendChild( item );
   // at least 1px, if item hasn't loaded
   // Not exactly accurate, but it's cool
   this.columnHeights[ index ] += item.offsetHeight || 1;
@@ -178,7 +197,7 @@ proto.measureColumnHeight = function( elem ) {
   var boundingRect = this.element.getBoundingClientRect();
   var column;
   var length = this.activeColumns.length;
-  for(var i=length-1; i>=0; i--){ //horribly looking but fast
+  for(var i=0; i < length; i++){ //horribly looking but fast
     column = this.activeColumns[i];
     if ( !elem || column.contains( elem ) ) {
       var lastChildRect = column.lastElementChild.getBoundingClientRect();
@@ -198,7 +217,7 @@ proto.onWindowResize = function() {
 };
 
 proto.onDebouncedResize = function() {
-    var activeColumns = this.getActiveColumns();
+  var activeColumns = this.getActiveColumns();
   // check if columns changed
   var isSameLength = activeColumns.length == this.activeColumns.length;
   var isSameColumns = true;
@@ -225,7 +244,7 @@ proto.onLoad = function( event ) {
 proto.destroy = function() {
   // move items back to container
   var length = this.items.length;
-  for (var i=length-1; i>=0; i--) {
+  for (var i=0; i < length; i++) {
     this.element.prependChild( this.items[i] );
   }
   // remove events
@@ -341,9 +360,8 @@ function makeArray( obj ) {
   } else if ( obj && typeof obj.length == 'number' ) {
     // convert nodeList to array
     var length = obj.length;
-    var l = length-1;
     ary.length = length;
-    for ( var i=l; i >= 0 ; i-- ) {
+    for ( var i=0; i < length ; i++ ) {
       ary[i] =  obj[i];
     }
   } else {
