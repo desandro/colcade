@@ -109,22 +109,11 @@ proto.getActiveColumns = function() {
   });
 };
 
-proto.getActiveColumnsClone = function() {
-    var activeColumnsClone = document.createDocumentFragment()
-    var length = this.activeColumns.length
-    for (var i = 0; i < length; i++) {
-      var li = document.createElement('li')
-      activeColumnsClone.appendChild(li)
-    }
-    return activeColumnsClone.querySelectorAll('li');
-}
-
 // ----- layout ----- //
 
 // public, updates activeColumns
 proto.layout = function() {
   this.activeColumns = this.getActiveColumns();
-  this.activeColumnsClone = this.getActiveColumnsClone();
   this._layout();
 };
 
@@ -139,28 +128,50 @@ proto._layout = function() {
 };
 
 proto.layoutItems = function( items ) {
-  var length = items.length;
-  for (var i = 0; i < length; i++) {
-    this.layoutItem(items[i]);
+
+  var columnFragments = {};
+
+  items.forEach( function( item ) {
+    var index = this.getColumnLayoutIndex();
+    // add item to fragment
+    var fragment = columnFragments[ index ];
+    if ( !fragment ) {
+      // create fragment if not already there
+      fragment = columnFragments[ index ] = document.createDocumentFragment();
+    }
+    fragment.appendChild( item );
+
+    this.updateColumnHeight( index, item );
+  }, this);
+
+  // append fragments to columns
+  for ( var index in columnFragments ) {
+    var fragment = columnFragments[ index ];
+    this.appendColumnNode( index, fragment );
   }
-  this.renderToActiveColumns( this.activeColumnsClone );
 };
 
-proto.renderToActiveColumns = function( items ) {
-    var length = this.activeColumns.length
-    for (let i = 0; i < length; i++) {
-      this.activeColumns[ i ].appendChild( items[ i ] );
-    }
-}
-
-proto.layoutItem = function( item ) {
-  // layout item by appending to column
+proto.getColumnLayoutIndex = function() {
   var minHeight = Math.min.apply( Math, this.columnHeights );
   var index = this.columnHeights.indexOf( minHeight );
-  this.activeColumnsClone[ index ].appendChild( item );
+  return index;
+};
+
+proto.updateColumnHeight = function( index, item ) {
   // at least 1px, if item hasn't loaded
   // Not exactly accurate, but it's cool
   this.columnHeights[ index ] += item.offsetHeight || 1;
+};
+
+proto.appendColumnNode = function( index, node ) {
+  var column = this.activeColumns[ index ];
+  column.appendChild( node );
+};
+
+proto.layoutItem = function( item ) {
+  var index = this.getColumnLayoutIndex();
+  this.updateColumnHeight( index, item );
+  this.appendColumnNode( index, item );
 };
 
 // ----- adding items ----- //
@@ -184,10 +195,9 @@ proto.prepend = function( elems ) {
 proto.getQueryItems = function( elems ) {
   elems = makeArray( elems );
   var fragment = document.createDocumentFragment();
-  var length = elems.length;
-  for(var i=0; i<length; i++) {
-    fragment.appendChild( elems[i] );
-  }
+  elems.forEach( function( elem ) {
+    fragment.appendChild( elem );
+  });
   return querySelect( this.options.items, fragment );
 };
 
@@ -195,16 +205,15 @@ proto.getQueryItems = function( elems ) {
 
 proto.measureColumnHeight = function( elem ) {
   var boundingRect = this.element.getBoundingClientRect();
-  var column;
-  var length = this.activeColumns.length;
-  for(var i=0; i < length; i++){ //horribly looking but fast
-    column = this.activeColumns[i];
+  this.activeColumns.forEach( function( column, i ) {
+    // if elem, measure only that column
+    // if no elem, measure all columns
     if ( !elem || column.contains( elem ) ) {
       var lastChildRect = column.lastElementChild.getBoundingClientRect();
       // not an exact calculation as it includes top border, and excludes item bottom margin
       this.columnHeights[ i ] = lastChildRect.bottom - boundingRect.top;
     }
-  }
+  }, this );
 };
 
 // ----- events ----- //
@@ -221,12 +230,9 @@ proto.onDebouncedResize = function() {
   // check if columns changed
   var isSameLength = activeColumns.length == this.activeColumns.length;
   var isSameColumns = true;
-  var length = this.activeColumns.length;
-  
-  for (var i = 0; i < length; i++) {
-    isSameColumns = isSameColumns && this.activeColumns[i] == this.activeColumns[i]
-  }
-
+  this.activeColumns.forEach( function( column, i ) {
+    isSameColumns = isSameColumns && column == activeColumns[i];
+  });
   if ( isSameLength && isSameColumns ) {
     return;
   }
@@ -243,10 +249,9 @@ proto.onLoad = function( event ) {
 
 proto.destroy = function() {
   // move items back to container
-  var length = this.items.length;
-  for (var i=0; i < length; i++) {
-    this.element.prependChild( this.items[i] );
-  }
+  this.items.forEach( function( item ) {
+    this.element.appendChild( item );
+  }, this );
   // remove events
   window.removeEventListener( 'resize', this._windowResizeHandler );
   this.element.removeEventListener( 'load', this._loadHandler, true );
@@ -259,10 +264,7 @@ proto.destroy = function() {
 
 docReady( function() {
   var dataElems = querySelect('[data-colcade]');
-  var length = dataElems.length;
-  for (var i=0; i<length; i++) {
-    htmlInit( dataElems[i] )
-  }
+  dataElems.forEach( htmlInit );
 });
 
 function htmlInit( elem ) {
@@ -270,13 +272,12 @@ function htmlInit( elem ) {
   var attr = elem.getAttribute('data-colcade');
   var attrParts = attr.split(',');
   var options = {};
-  var length = attrParts.length;
-  for (var i=0; i<length; i++) {
-    var pair = attrParts[i].split(':');
+  attrParts.forEach( function( part ) {
+    var pair = part.split(':');
     var key = pair[0].trim();
     var value = pair[1].trim();
     options[ key ] = value;
-  }
+  });
 
   new Colcade( elem, options );
 }
@@ -359,10 +360,8 @@ function makeArray( obj ) {
     ary = obj;
   } else if ( obj && typeof obj.length == 'number' ) {
     // convert nodeList to array
-    var length = obj.length;
-    ary.length = length;
-    for ( var i=0; i < length ; i++ ) {
-      ary[i] =  obj[i];
+    for ( var i=0; i < obj.length; i++ ) {
+      ary.push( obj[i] );
     }
   } else {
     // array of single index
