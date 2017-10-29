@@ -176,12 +176,6 @@ proto.appendColumnNode = function( index, node ) {
   column.appendChild( node );
 };
 
-proto.layoutItem = function( item ) {
-  var index = this.getColumnLayoutIndex();
-  this.updateColumnHeight( index, item );
-  this.appendColumnNode( index, item );
-};
-
 // ----- adding items ----- //
 
 proto.append = function( elems ) {
