@@ -98,8 +98,16 @@ proto.updateColumns = function() {
   this.columns = querySelect( this.options.columns, this.element );
 };
 
+proto.updateItemsHeights = function() {
+  this.itemsHeights = []
+  this.itemsHeights = this.items.map(function(item) {
+    return item.offsetHeight;
+  })
+};
+
 proto.updateItems = function() {
   this.items = querySelect( this.options.items, this.element );
+  this.updateItemsHeights();
 };
 
 proto.getActiveColumns = function() {
@@ -131,7 +139,7 @@ proto.layoutItems = function( items ) {
 
   var columnFragments = {};
 
-  items.forEach( function( item ) {
+  items.forEach( function( item, itemIndex ) {
     var index = this.getColumnLayoutIndex();
     // add item to fragment
     var fragment = columnFragments[ index ];
@@ -141,7 +149,7 @@ proto.layoutItems = function( items ) {
     }
     fragment.appendChild( item );
 
-    this.updateColumnHeight( index, item );
+    this.updateColumnHeight( index, itemIndex );
   }, this);
 
   // append fragments to columns
@@ -157,10 +165,10 @@ proto.getColumnLayoutIndex = function() {
   return index;
 };
 
-proto.updateColumnHeight = function( index, item ) {
+proto.updateColumnHeight = function( index, itemIndex ) {
   // at least 1px, if item hasn't loaded
   // Not exactly accurate, but it's cool
-  this.columnHeights[ index ] += item.offsetHeight || 1;
+  this.columnHeights[ index ] += this.itemsHeights[itemIndex] || 1;
 };
 
 proto.appendColumnNode = function( index, node ) {
