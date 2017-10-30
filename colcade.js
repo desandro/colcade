@@ -99,10 +99,10 @@ proto.updateColumns = function() {
 };
 
 proto.updateItemsHeights = function() {
-  this.itemsHeights = []
-  this.itemsHeights = this.items.map(function(item) {
-    return item.offsetHeight;
-  })
+  this.itemsHeights = [];
+  this.items.forEach(function(item) {
+    this.itemsHeights.push(item.offsetHeight);
+  }, this);
 };
 
 proto.updateItems = function() {
