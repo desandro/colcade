@@ -54,7 +54,7 @@ Bower: `bower install colcade`
 
 ## Demos
 
-+ [Basic, HTML init](http://codepen.io/desandro/pen/vGPVOR)
++ [Basic, HTML init](http://codepen.io/desandro/pen/EKMdxg)
 + [jQuery](http://codepen.io/desandro/pen/vGPVOR)
 + [Vanilla JS](http://codepen.io/desandro/pen/EKMdjN)
 + [Images](http://codepen.io/desandro/pen/pyYxvz)
