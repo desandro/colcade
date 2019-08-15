@@ -214,11 +214,13 @@ proto.onLoad = function( event ) {
 
 // ----- destroy ----- //
 
-proto.destroy = function() {
-  // move items back to container
-  this.items.forEach( function( item ) {
-    this.element.appendChild( item );
-  }, this );
+proto.destroy = function(moveItemsBack = true) {
+  if(moveItemsBack) {
+    // move items back to container
+    this.items.forEach( function( item ) {
+      this.element.appendChild( item );
+    }, this );
+  }
   // remove events
   window.removeEventListener( 'resize', this._windowResizeHandler );
   this.element.removeEventListener( 'load', this._loadHandler, true );

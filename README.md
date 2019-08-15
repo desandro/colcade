@@ -214,6 +214,15 @@ $grid.colcade('destroy')
 colc.destroy()
 ```
 
+Remove event listeners and instances, but preserve DOM as is.
+
+``` js
+// jQuery
+$grid.colcade('destroy', false)
+// vanilla JS
+colc.destroy(false)
+```
+
 ---
 
 By David DeSandro
