@@ -132,6 +132,11 @@ proto.layoutItems = function( items ) {
 };
 
 proto.layoutItem = function( item ) {
+  // skip if no column is active
+  if (!this.activeColumns.length) {
+    return;
+  }
+
   // layout item by appending to column
   var minHeight = Math.min.apply( Math, this.columnHeights );
   var index = this.columnHeights.indexOf( minHeight );
